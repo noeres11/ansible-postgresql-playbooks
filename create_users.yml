@@ -1,0 +1,17 @@
+- name: Create PostgreSQL Users
+  hosts: localhost
+  become: true
+  vars:
+    db_users:
+      - name: dba_read
+        password: "safe_read"
+      - name: dba_admin
+        password: "safe_admin"
+  tasks:
+    - name: Create user
+      community.postgresql.postgresql_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        role_attr_flags: CREATEDB
+        db: postgres
+      loop: "{{ db_users }}"

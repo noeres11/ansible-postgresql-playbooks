@@ -3,7 +3,7 @@
   hosts: localhost
   become: true
   vars:
-    # Role definition WITHOUT the login privilege
+    # Role definition WITHOUT login privilege
     db_roles:
       - name: read_only
         login: false
@@ -77,12 +77,6 @@
         privs: SELECT,INSERT,UPDATE,DELETE
         role: read_write
         state: present
-    
-    - name: Create tables
-     community.postgresql.postgresql_privs:
-        db: testdb
-        type: table
-        
 
 
 

@@ -1,0 +1,11 @@
+- name: Create PostgreSQL database
+  hosts: localhost
+  become: true
+  vars:
+    db_name: test_db
+    db_owner: dba_admin
+  tasks:
+    - name: Create a new PostgreSQL database
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        owner: "{{ db_owner }}"

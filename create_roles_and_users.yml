@@ -1,0 +1,89 @@
+# This playbook creates roles and users for PostgreSQL
+- name: Create roles and users for PostgreSQL
+  hosts: localhost
+  become: true
+  vars:
+    # Role definition WITHOUT the login privilege
+    db_roles:
+      - name: read_only
+        login: false
+        
+      - name: read_write
+        login: false
+    
+    # User definition with the login privilege.
+    # Every user must be assigned to one of the predefined roles.
+    db_users:
+      - name: monitoring_user
+        password: "NE&h2Gjqw6"
+        memberof: read_only
+        
+      - name: app_user
+        password: "C2+Atg4%uT"
+        memberof: read_write
+        
+  tasks:
+    - name: Check that all users have included the field 'memberof'
+      assert:
+        that: item.memberof is defined
+        fail_msg: "'memberof' is required for user {{ item.name }}"
+      loop: "{{ db_users }}"
+      
+    - name: Create roles without login privilege
+      community.postgresql.postgresql_user:
+        name: "{{ item.name }}"
+        role_attr_flags: "NOLOGIN"
+        state: present
+      loop: "{{ db_roles }}"
+      
+    - name: Create users with login privilege
+      community.postgresql.postgresql_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        role_attr_flags: "LOGIN"
+        state: present
+      loop: "{{ db_users }}"
+      
+    - name: Grant role membership to users
+      community.postgresql.postgresql_membership:
+        user: "{{ item.name }}"
+        groups: ["{{ item.memberof }}"]
+        state: present
+      loop: "{{ db_users }}"
+ 
+    - name: Grant USAGE on public schema to both roles
+      community.postgresql.postgresql_privs:
+        db: testdb
+        type: schema
+        privs: USAGE
+        objs: public
+        roles: read_only,read_write
+        state: present
+
+    - name: Grant SELECT on all tables in schema to role read_only
+      community.postgresql.postgresql_privs:
+        db: testdb
+        type: table
+        objs: ALL_IN_SCHEMA
+        privs: SELECT
+        role: read_only
+        state: present
+        
+    - name: Grant ALL privileges on all tables in schema public to role read_write
+      community.postgresql.postgresql_privs:
+        db: testdb
+        type: table
+        objs: ALL_IN_SCHEMA
+        privs: SELECT,INSERT,UPDATE,DELETE
+        role: read_write
+        state: present
+    
+    - name: Create tables
+     community.postgresql.postgresql_privs:
+        db: testdb
+        type: table
+        
+
+
+
+

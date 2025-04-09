@@ -1,0 +1,27 @@
+- name: Create tables in database testdb
+  hosts: localhost
+  become: true
+  vars:
+    db_name: testdb
+  tasks:
+    - name: Create customers table
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: |
+          CREATE TABLE IF NOT EXISTS public.customers (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            created TIMESTAMP DEFAULT NOW()
+          );
+    - name: Create orders table
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: |
+          CREATE TABLE IF NOT EXISTS public.orders (
+            id SERIAL PRIMARY KEY,
+            customer_id INTEGER NOT NULL REFERENCES public.customers(id),
+            product_name TEXT NOT NULL,
+            quantity INTEGER NOT NULL CHECK (quantity > 0),
+            created TIMESTAMP DEFAULT NOW()
+          );

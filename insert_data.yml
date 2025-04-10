@@ -1,0 +1,46 @@
+- name: Insert sample data into tables customer and order
+  hosts: localhost
+  become: false
+  vars:
+    db_name: testdb
+  tasks:
+    - name: Insert students
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: |
+          INSERT INTO student (first_name, last_name, email) VALUES
+          ('Daniel', 'Jones', 'daniel@jones.com'),
+          ('Dirk', 'Mayer', 'dirk@mayer.com'),
+          ('Megan', 'Johnson', 'megan@johnson.com'),
+          ('Anna', 'Stone', 'anna@hstone.com'),
+          ('Richard', 'Herrmann', 'megan@herrmann.com');
+        
+    - name: Insert courses
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: |
+          INSERT INTO course (title, start_date, duration) VALUES
+          ('Data Analyst', '2025-06-15', 250),
+          ('Deep Learning', '2025-07-10', 125),
+          ('Machine Learning', '2025-09-10', 100),
+          ('Full Stack Software Developer', '2025-06-03', 300),
+          ('DevOps Software Engineer', '2025-08-16', 550),
+          ('Data Engineering', '2025-10-03', 425);
+        
+    - name: Insert enrollments
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: |
+          INSERT INTO enrollment (date, student_id, course_id) VALUES
+          ('2025-05-15 09:10:00', 1, 1),
+          ('2025-05-19 07:21:59', 2, 3),
+          ('2025-05-21 12:16:23', 2, 2),
+          ('2025-06-10 14:25:09', 3, 5),
+          ('2025-06-13 16:54:12', 1, 1),
+          ('2025-06-28 15:34:23', 4, 6),
+          ('2025-07-22 11:00:07', 2, 3),
+          ('2025-08-03 22:15:00', 1, 1),
+          ('2025-08-10 02:23:10', 5, 4),
+          ('2025-08-25 20:01:25', 3, 6),
+          ('2025-08-30 18:16:15', 5, 2);
+

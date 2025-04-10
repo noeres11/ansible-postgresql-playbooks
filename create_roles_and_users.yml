@@ -63,6 +63,7 @@
     - name: Grant SELECT on all tables in schema to role read_only
       community.postgresql.postgresql_privs:
         db: testdb
+        schema: public
         type: table
         objs: ALL_IN_SCHEMA
         privs: SELECT
@@ -72,6 +73,7 @@
     - name: Grant ALL privileges on all tables in schema public to role read_write
       community.postgresql.postgresql_privs:
         db: testdb
+        schema: public
         type: table
         objs: ALL_IN_SCHEMA
         privs: SELECT,INSERT,UPDATE,DELETE

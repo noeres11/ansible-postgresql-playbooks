@@ -1,11 +1,10 @@
+# This playbook creates a test database for PostgreSQL
 - name: Create PostgreSQL database
   hosts: localhost
   become: true
-  vars:
-    db_name: testdb
-    db_owner: postgres
+  
   tasks:
     - name: Create a new PostgreSQL database
       community.postgresql.postgresql_db:
-        name: "{{ db_name }}"
-        owner: "{{ db_owner }}"
+        name: testdb
+        owner: postgres

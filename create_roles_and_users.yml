@@ -2,7 +2,10 @@
 - name: Create roles and users for PostgreSQL
   hosts: localhost
   become: true
+  
   vars:
+    db_name: testdb
+    
     # Role definition WITHOUT login privilege
     db_roles:
       - name: read_only
@@ -21,7 +24,7 @@
       - name: app_user
         password: "C2+Atg4%uT"
         memberof: read_write
-        
+  
   tasks:
     - name: Check that all users have included the field 'memberof'
       assert:
@@ -53,7 +56,7 @@
  
     - name: Grant USAGE on public schema to both roles
       community.postgresql.postgresql_privs:
-        db: testdb
+        db: "{{ db_name }}"
         type: schema
         privs: USAGE
         objs: public
@@ -62,7 +65,7 @@
 
     - name: Grant SELECT on all tables in schema to role read_only
       community.postgresql.postgresql_privs:
-        db: testdb
+        db: "{{ db_name }}"
         schema: public
         type: table
         objs: ALL_IN_SCHEMA
@@ -72,7 +75,7 @@
         
     - name: Grant ALL privileges on all tables in schema public to role read_write
       community.postgresql.postgresql_privs:
-        db: testdb
+        db: "{{ db_name }}"
         schema: public
         type: table
         objs: ALL_IN_SCHEMA

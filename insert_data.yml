@@ -1,8 +1,11 @@
+# This playbook inserts sample data to tables
 - name: Insert sample data into tables customer and order
   hosts: localhost
   become: false
+  
   vars:
     db_name: testdb
+  
   tasks:
     - name: Insert students
       community.postgresql.postgresql_query:

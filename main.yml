@@ -1,22 +1,5 @@
-- name: Main Playbook - PostgreSQL Demo with Ansible
-  hosts: localhost
-  become: false
-  vars:
-    db_name: testdb
-
-  tasks:
-    - name: Create database
-      import_tasks: create_database.yml
-      tags: create_db
-
-    - name: Create roles and users
-      import_tasks: create_roles_and_users.yml
-      tags: create_roles
-
-    - name: Create tables
-      import_tasks: create_tables.yml
-      tags: create_tables
-
-    - name: Insert sample data
-      import_tasks: insert_students_courses.yml
-      tags: insert_data
+# Main Playbook
+- import_playbook: create_database.yml
+- import_playbook: create_roles_and_users.yml
+#- import_playbook: create_tables.yml
+#- import_playbook: insert_data.yml

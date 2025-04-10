@@ -5,6 +5,7 @@
   
   vars:
     db_name: testdb
+    schema_name: myschema
     
     # Role definition WITHOUT login privilege
     db_roles:
@@ -46,7 +47,7 @@
         role_attr_flags: "LOGIN"
         state: present
       loop: "{{ db_users }}"
-      
+
     - name: Grant role membership to users
       community.postgresql.postgresql_membership:
         user: "{{ item.name }}"
@@ -62,26 +63,19 @@
         objs: public
         roles: read_only,read_write
         state: present
-
-    - name: Grant SELECT on all tables in schema to role read_only
-      community.postgresql.postgresql_privs:
+      
+      # Alter default privileges in schema public grant select on tables to read_only;
+      # Every future object can be automatically accessed by the roles, without having to specify permissions.
+      
+    - name:  Alter default privileges in schema public
+      community.postgresql.postgresql_query:
         db: "{{ db_name }}"
-        schema: public
-        type: table
-        objs: ALL_IN_SCHEMA
-        privs: SELECT
-        role: read_only
-        state: present
-        
-    - name: Grant ALL privileges on all tables in schema public to role read_write
-      community.postgresql.postgresql_privs:
-        db: "{{ db_name }}"
-        schema: public
-        type: table
-        objs: ALL_IN_SCHEMA
-        privs: SELECT,INSERT,UPDATE,DELETE
-        role: read_write
-        state: present
+        query: |
+          ALTER DEFAULT PRIVILEGES IN SCHEMA public
+          GRANT SELECT ON TABLES TO read_only;
+          
+          ALTER DEFAULT PRIVILEGES IN SCHEMA public
+          GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO read_write;
 
 
 

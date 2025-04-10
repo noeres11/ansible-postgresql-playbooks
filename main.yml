@@ -1,5 +1,5 @@
 # Main Playbook
 - import_playbook: create_database.yml
 - import_playbook: create_roles_and_users.yml
-#- import_playbook: create_tables.yml
-#- import_playbook: insert_data.yml
+- import_playbook: create_tables.yml
+- import_playbook: insert_data.yml

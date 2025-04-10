@@ -2,7 +2,6 @@
 - name: Create PostgreSQL database
   hosts: localhost
   become: true
-  
   tasks:
     - name: Create a new PostgreSQL database
       community.postgresql.postgresql_db:
